@@ -40,7 +40,7 @@ jobs:
 
       # Generate values.schema.json from helm
       - name: Generate values.schema.json
-        uses: losisin/helm-values-schema-json-action@v1
+        uses: losisin/helm-values-schema-json-action@v2
         with:
           # Use '--' style comments for description purposes
           useHelmDocs: true
