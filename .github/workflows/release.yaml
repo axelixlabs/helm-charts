@@ -45,8 +45,11 @@ jobs:
           # Use '--' style comments for description purposes
           useHelmDocs: true
           # Working around bug https://github.com/losisin/helm-values-schema-json-action/pull/408
-          # TODO: that does not actually work in case we would have multiple charts
+          # TODO: that will not work in case we would have multiple charts
           values: charts/axelix/values.yaml
+
+      - name: Copy license
+        run: cp values.schema.json charts/axelix/
 
       - name: Copy license
         run: cp LICENSE charts/axelix
