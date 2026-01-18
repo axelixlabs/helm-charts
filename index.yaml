@@ -1,0 +1,20 @@
+apiVersion: v1
+entries:
+  axelix:
+  - annotations:
+      artifacthub.io/license: MIT
+      artifacthub.io/links: |
+        - name: Charts Source
+          url: https://github.com/axelixlabs/helm-charts
+    apiVersion: v2
+    appVersion: 1.0.0-SNAPSHOT
+    created: "2026-01-18T20:33:01.950928149Z"
+    description: Helm chart for deploying Axelix Master to Kubernetes
+    digest: e9a505021704e79237ceeb66465201e60d7b20940d2af022a3f0f6f6654a4648
+    home: https://axelix.io
+    name: axelix
+    type: application
+    urls:
+    - https://github.com/axelixlabs/helm-charts/releases/download/axelix-1.0.0/axelix-1.0.0.tgz
+    version: 1.0.0
+generated: "2026-01-18T20:33:01.950935242Z"
