@@ -62,4 +62,4 @@ jobs:
       - name: Push Helm Chart to GitHub Container Registry
         working-directory: charts/axelix
         run: |
-          helm push axelix-${{ env.RELEASE_TAG }}.tgz oci://ghcr.io/${{ github.repository_owner }}
+          helm push axelix-${{ env.RELEASE_TAG }}.tgz oci://ghcr.io/${{ github.repository_owner }}/axelix
