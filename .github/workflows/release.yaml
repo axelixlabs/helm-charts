@@ -1,0 +1,59 @@
+on:
+  workflow_dispatch:
+    inputs:
+      axelix_version:
+        description: 'Axelix Version (e.g, v1.1.3)'
+        required: true
+        type: string
+      git_tag:
+        description: 'Current repository git tag to release from (e.g., v1.0.1)'
+        required: true
+        type: string
+
+env:
+  USERNAME: ${{ github.actor }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_CONTAINER_REGISTRY: ghcr.io
+  RELEASE_TAG: ${{ github.event.inputs.git_tag }}
+  AXELIX_VERSION: ${{ github.event.inputs.axelix_version }}
+  PGP_KEY_ID: ${{ secrets.PGP_KEY_ID }}
+  PGP_SIGNING_KEY: ${{ secrets.PGP_SIGNING_KEY }}
+  PGP_SIGNING_KEY_PASSPHRASE: ${{ secrets.PGP_SIGNING_KEY_PASSPHRASE }}
+
+jobs:
+  release-helm-chart:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.14.0
+
+      - name: Add helm plugin for values.schema.json generation
+        run: helm plugin install https://github.com/losisin/helm-values-schema-json.git
+
+      - name: Generate values.schema.json
+        working-directory: charts/axelix
+        run: helm schema -f values.yaml
+
+      - name: Copy license
+        run: cp LICENSE charts/axelix
+
+      - name: Create Helm Chart Artifact
+        # TODO: Sign the chart before publication
+        working-directory: charts/axelix
+        run: helm package . --app-version ${{ env.RELEASE_TAG }} --version ${{ env.AXELIX_VERSION }}
+
+      - name: Authenticate to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ${{ env.GITHUB_CONTAINER_REGISTRY }} -u ${{ env.USERNAME }} --password-stdin
+
+      - name: Push Helm Chart to GitHub Container Registry
+        run: |
+          helm push axelix-${{ env.RELEASE_TAG }}.tgz oci://ghcr.io/${{ github.repository_owner }}
