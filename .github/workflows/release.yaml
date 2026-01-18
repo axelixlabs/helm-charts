@@ -44,6 +44,8 @@ jobs:
         with:
           # Use '--' style comments for description purposes
           useHelmDocs: true
+          # Working around bug https://github.com/losisin/helm-values-schema-json-action/pull/408
+          values: values.yaml
 
       - name: Copy license
         run: cp LICENSE charts/axelix
