@@ -1,65 +1,60 @@
 name: Release Pipeline
 
 on:
-  workflow_dispatch:
-    inputs:
-      axelix_version:
-        description: 'Axelix Version (e.g, v1.1.3)'
-        required: true
-        type: string
-      git_tag:
-        description: 'Current repository git tag to release from (e.g., 1.0.1)'
-        required: true
-        type: string
+  push:
+    branches:
+      - main
 
-env:
-  USERNAME: ${{ github.actor }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_CONTAINER_REGISTRY: ghcr.io
-  RELEASE_TAG: ${{ github.event.inputs.git_tag }}
-  AXELIX_VERSION: ${{ github.event.inputs.axelix_version }}
-  PGP_KEY_ID: ${{ secrets.PGP_KEY_ID }}
-  PGP_SIGNING_KEY: ${{ secrets.PGP_SIGNING_KEY }}
-  PGP_SIGNING_KEY_PASSPHRASE: ${{ secrets.PGP_SIGNING_KEY_PASSPHRASE }}
+# Nullify permissions for jobs by default
+permissions: {}
 
 jobs:
   release-helm-chart:
     permissions:
-      contents: read
-      packages: write
+      contents: write # to push chart release and create a release (helm/chart-releaser-action)
+      packages: write # needed for ghcr access
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          ref: v${{ env.RELEASE_TAG }}
-          fetch-depth: 0
 
       - name: Setup Helm
         uses: azure/setup-helm@v4.3.0
         with:
           version: v3.14.0
 
-      - name: Add helm plugin for values.schema.json generation
-        run: helm plugin install https://github.com/losisin/helm-values-schema-json.git
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+      # Generate README from README.mg.gotmpl
+      - name: Generate README via helm-docs
+        uses: losisin/helm-docs-github-action@v1
+        with:
+          chart-search-root: charts
+          # Version of the helm-docs to be used
+          version: 1.14.2
+
+      # Generate values.schema.json from helm
       - name: Generate values.schema.json
-        working-directory: charts/axelix
-        run: helm schema -f values.yaml
+        uses: losisin/helm-values-schema-json-action@v1
+        with:
+          # Use '--' style comments for description purposes
+          useHelmDocs: true
 
       - name: Copy license
         run: cp LICENSE charts/axelix
 
-      - name: Create Helm Chart Artifact
-        # TODO: Sign the chart before publication
-        working-directory: charts/axelix
-        run: helm package . --app-version ${{ env.AXELIX_VERSION }} --version ${{ env.RELEASE_TAG }}
+      - name: Remove template file before release
+        run: rm charts/axelix/README.md.gotmpl
 
-      - name: Authenticate to GitHub Container Registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ${{ env.GITHUB_CONTAINER_REGISTRY }} -u ${{ env.USERNAME }} --password-stdin
-
-      - name: Push Helm Chart to GitHub Container Registry
-        working-directory: charts/axelix
-        run: |
-          helm push axelix-${{ env.RELEASE_TAG }}.tgz oci://ghcr.io/${{ github.repository_owner }}/axelix
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.7.0
+        with:
+          charts_dir: charts
+          config: cr.yaml
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_SKIP_EXISTING: "true"
