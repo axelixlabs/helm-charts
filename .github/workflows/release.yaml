@@ -1,3 +1,5 @@
+name: Release Pipeline
+
 on:
   workflow_dispatch:
     inputs:
@@ -6,7 +8,7 @@ on:
         required: true
         type: string
       git_tag:
-        description: 'Current repository git tag to release from (e.g., v1.0.1)'
+        description: 'Current repository git tag to release from (e.g., 1.0.1)'
         required: true
         type: string
 
@@ -48,7 +50,7 @@ jobs:
       - name: Create Helm Chart Artifact
         # TODO: Sign the chart before publication
         working-directory: charts/axelix
-        run: helm package . --app-version ${{ env.RELEASE_TAG }} --version ${{ env.AXELIX_VERSION }}
+        run: helm package . --app-version ${{ env.AXELIX_VERSION }} --version ${{ env.RELEASE_TAG }}
 
       - name: Authenticate to GitHub Container Registry
         run: |
