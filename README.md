@@ -1,7 +1,7 @@
 # Axelix Kubernetes Helm Chart
 
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/license/mit)
-[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/axelix)](https://artifacthub.io/packages/search?repo=axelix)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/axelix)](https://artifacthub.io/packages/search?repo=axelix)
 
 The code is provided as-is with no warranties.
 
