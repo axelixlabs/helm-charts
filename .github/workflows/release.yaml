@@ -31,12 +31,11 @@ jobs:
 
       # Generate README from README.mg.gotmpl
       - name: Generate README via helm-docs
-        uses: losisin/helm-docs-github-action@v1
+        uses: losisin/helm-docs-github-action@v1.7.1
         with:
           chart-search-root: charts
           # Version of the helm-docs to be used
-          # Waiting for https://github.com/losisin/helm-docs-github-action/pull/364 to be merged
-          # version: 1.14.2
+          version: 1.14.2
 
       # Generate values.schema.json from helm
       - name: Generate values.schema.json
@@ -48,7 +47,7 @@ jobs:
           # TODO: that will not work in case we would have multiple charts
           values: charts/axelix/values.yaml
 
-      - name: Copy license
+      - name: Copy values schema
         run: cp values.schema.json charts/axelix/
 
       - name: Copy license
