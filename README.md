@@ -5,6 +5,24 @@
 
 The code is provided as-is with no warranties.
 
+## Installation
+
+[Helm](https://helm.sh) must be installed to use the charts.
+Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
+
+Once Helm is set up properly, add the repo as follows:
+
+```console
+helm repo add axelixlabs https://axelixlabs.github.io/helm-charts
+helm repo update
+```
+
+After that, the helm chart can be safely installed (make sure the correct kubeconfig is used by the `helm` cli):
+
+```console
+helm install axelix axelixlabs/axelix
+```
+
 # How We Manage and Release Charts
 
 Because we want our helm charts to be:
@@ -17,21 +35,6 @@ We're releasing our charts in the following way:
 1. In the GitHub Pages (`gh-pages` branch), we have the `index.yaml` that serves as the main index file for the `helm search` CLI commands (Assuming the repository was added).
 2. GitHub Pages also serve as the actual repository URL for the Artifacts Hub, since it hosts the `index.yaml` along the `artifacthub-repo.yml`.
 3. The actual helm charts are released as compressed tarballs (`.tgz`) inside the GitHub Releases, i.e. each released artifact is bound to a particular GitHub release. The GitHub release page [can be found here](https://github.com/axelixlabs/helm-charts/releases). 
-
-## Usage
-
-[Helm](https://helm.sh) must be installed to use the charts.
-Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
-
-Once Helm is set up properly, add the repo as follows:
-
-```console
-helm repo add axelixlabs https://axelixlabs.github.io/helm-charts
-```
-
-You can then run `helm search repo axelix` to find the chart.
-
-Chart documentation is available in [axelix directory](https://github.com/axelixlabs/helm-charts/blob/main/charts/axelix/README.md).
 
 ## Contributing
 
