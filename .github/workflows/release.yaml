@@ -29,11 +29,12 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      # Generate README from README.mg.gotmpl
+      # Generate complete README from README.md template
       - name: Generate README via helm-docs
         uses: losisin/helm-docs-github-action@v1.7.1
         with:
           chart-search-root: charts
+          template-files: README.md
           # Version of the helm-docs to be used
           version: v1.14.2
 
@@ -52,9 +53,6 @@ jobs:
 
       - name: Copy license
         run: cp LICENSE charts/axelix
-
-      - name: Remove template file before release
-        run: rm charts/axelix/README.md.gotmpl
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0

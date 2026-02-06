@@ -1,6 +1,6 @@
 # Axelix Helm Chart
 
-* Installs [Axelix](https://github.com/axelixlabs/axelix) to Kubernetes, deploying both backend and frontend components.
+* Installs [Axelix Master](https://github.com/axelixlabs/axelix) to Kubernetes, deploying the Axelix Master component.
 
 ## Get Repo Info
 
@@ -55,19 +55,17 @@ helm install my-release axelixlabs/axelix -f values.yaml
 
 ## App Configuration
 
-By default, axelix-master container itself runs on port 8080 and handles the API endpoints. The backend service is exposed at `/api` path when ingress is enabled.
+By default, axelix-master container runs on port 8080 and handles both API endpoints and the UI. The service is exposed at `/` path when ingress is enabled.
 
 ### Health Checks
 
-The backend includes health check endpoints:
+The axelix-master includes health check endpoints:
 - Liveness: `/api/axelix/actuator/health/liveness`
 - Readiness: `/api/axelix/actuator/health/readiness`
 
 ## Ingress Configuration
 
-When `ingress.enabled` is set to `true`, the chart creates an Ingress resource that routes traffic:
-- `/api` path to the backend service (port 8080)
-- `/` path to the frontend service (port 80)
+When `ingress.enabled` is set to `true`, the chart creates an Ingress resource that routes traffic to the axelix-master service (port 8080). By default, the ingress is created in the same namespace as the release. You can override this by setting `ingress.namespace`.
 
 ### Example Ingress Configuration
 
@@ -85,38 +83,30 @@ ingress:
 
 ## Service Accounts and RBAC
 
-The chart can create service accounts for both backend and frontend components. The backend service account can be granted permissions via RBAC to access Kubernetes resources.
+The chart can create a service account for the axelix-master component. By default, the service account is created in the same namespace as the release. You can override this by setting `serviceAccount.namespace`.
 
-### Backend RBAC
+The service account can be granted permissions via RBAC to access Kubernetes resources.
+
+### RBAC Configuration
 
 When `rbac.autoCreateRole` is enabled, the chart creates:
 - A `Role` in the `rbac.targetNamespace` with permissions to get, list, and watch pods, services, and endpoints
-- A `RoleBinding` that binds the backend service account to the role
+- A `RoleBinding` that binds the axelix-master service account to the role
 
-This allows the backend to monitor Kubernetes resources in the specified namespace.
+This allows axelix-master to monitor Kubernetes resources in the specified namespace. Note that `rbac.targetNamespace` can be different from the release namespace if you want to monitor resources in a different namespace.
 
 ## Resource Management
 
-Both backend and frontend support custom resource requests and limits. Configure resources as follows:
+The axelix-master supports custom resource requests and limits. Configure resources as follows:
 
 ```yaml
-backend:
-  resources:
-    requests:
-      memory: "256Mi"
-      cpu: "100m"
-    limits:
-      memory: "512Mi"
-      cpu: "500m"
-
-frontend:
-  resources:
-    requests:
-      memory: "128Mi"
-      cpu: "50m"
-    limits:
-      memory: "256Mi"
-      cpu: "200m"
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
 ```
 
 ## Node Selection and Scheduling
@@ -124,60 +114,54 @@ frontend:
 You can control pod placement using node selectors, affinity rules, and tolerations:
 
 ```yaml
-backend:
-  nodeSelector:
-    kubernetes.io/os: linux
-  affinity:
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-            - key: app.kubernetes.io/name
-              operator: In
-              values:
-              - axelix-backend
-          topologyKey: kubernetes.io/hostname
-  tolerations:
-  - key: "special"
-    operator: "Equal"
-    value: "true"
-    effect: "NoSchedule"
+nodeSelector:
+  kubernetes.io/os: linux
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - axelix-master
+        topologyKey: kubernetes.io/hostname
+
+tolerations:
+- key: "special"
+  operator: "Equal"
+  value: "true"
+  effect: "NoSchedule"
 ```
 
 ## Volumes and Volume Mounts
 
-Both components support additional volumes and volume mounts:
+The axelix-master supports additional volumes and volume mounts:
 
 ```yaml
-backend:
-  volumes:
-  - name: config
-    configMap:
-      name: axelix-backend-config
-  volumeMounts:
-  - name: config
-    mountPath: /etc/axelix/config
-    readOnly: true
+volumes:
+- name: config
+  configMap:
+    name: axelix-master-config
+
+volumeMounts:
+- name: config
+  mountPath: /etc/axelix/config
+  readOnly: true
 ```
 
 ## Image Configuration
 
-Configure container images for both components:
+Configure the container image:
 
 ```yaml
-backend:
-  image:
-    name: "myregistry/axelix-backend"
-    tag: "v1.0.0"
-    pullPolicy: "IfNotPresent"
-
-frontend:
-  image:
-    name: "myregistry/axelix-frontend"
-    tag: "v1.0.0"
-    pullPolicy: "IfNotPresent"
+image:
+  name: "ghcr.io/axelixlabs/axelix"
+  ref: "1.0.0"
+  pullPolicy: "IfNotPresent"
 ```
 
 ### Image Pull Secrets

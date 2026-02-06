@@ -4,7 +4,7 @@ annotations:
     - name: Charts Source
       url: https://github.com/axelixlabs/helm-charts
 apiVersion: v2
-name: axelix-master
+name: axelix
 description: Helm chart for deploying Axelix Master to Kubernetes
 home: https://axelix.io
 type: application
