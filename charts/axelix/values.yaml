@@ -31,13 +31,14 @@ ingress:
 
 rbac:
 
-  # -- The namespace where monitored pods reside. Inside this namespace will also role and role-binding
-  # will be created if 'autoCreateRole = true'. The default is 'default'.
+  # -- The namespace where the pods that are supposed to be monitored by Axelix Master MUST reside.
+  # Inside this namespace role and role-binding will be created if 'autoCreateRole = true'. The default is
+  # 'default' namespace.
   targetNamespace: "default"
 
   # -- Whether to create the Role and Role-Binding for Axelix service account. Default is 'true'. If overridden
   # to false, then the end-user MUST ensure that Axelix service account either has required privileges to access the
-  # K8S KubeApi server, or the Axelix is not deployed under the discovery mode.
+  # K8S KubeApi server, or the Axelix is not deployed under the auto discovery mode at all.
   autoCreateRole: true
 
 # -- Array of secret names to be used when pulling the Axelix images
