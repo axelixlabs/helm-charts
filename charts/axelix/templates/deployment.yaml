@@ -8,7 +8,7 @@ metadata:
     {{- with $.Values.deployment.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- with .$.Values.deployment.annotations }}
+  {{- with $.Values.deployment.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -59,7 +59,7 @@ spec:
           readinessProbe:
             initialDelaySeconds: {{ $.Values.readiness.delay }}
             periodSeconds: {{ $.Values.readiness.period }}
-            failureThreshold: {{ $.Values.liveness.failureThreshold }}
+            failureThreshold: {{ $.Values.readiness.failureThreshold }}
             timeoutSeconds: {{ $.Values.readiness.timeoutSeconds }}
             httpGet:
               path: /api/axelix/actuator/health/readiness
@@ -82,11 +82,11 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .affinity }}
+      {{- with $.Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .tolerations }}
+      {{- with $.Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

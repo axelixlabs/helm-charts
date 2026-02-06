@@ -27,7 +27,7 @@ spec:
               service:
                 name: {{ $.Values.service.name }}
                 port:
-                  number: {{ $.Values.service.port.target }}
+                  number: {{ $.Values.service.port.source }}
             path: /
             pathType: Prefix
       {{- if $.Values.ingress.host }}

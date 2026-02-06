@@ -51,7 +51,7 @@ serviceAccount:
 
   # -- Name of the service account to create (if 'create = true') or name of an existing service account to be mounted into Axelix pods.
   # Default: the same name as the backend deployment.
-  name: ""
+  name: "axelix-master"
 
   # -- Whether to create service account for the backend pods or rely on an existing one. Default - true (i.e. a new service
   # account should be created).
