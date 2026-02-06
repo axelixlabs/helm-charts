@@ -22,7 +22,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ $.Values.serviceAccount.name }}
-    namespace: {{ $.Values.serviceAccount.namespace }}
+    namespace: {{ $.Values.serviceAccount.namespace | default $.Release.Namespace }}
 roleRef:
   kind: Role
   name: {{ $.Values.serviceAccount.name }}-role

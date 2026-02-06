@@ -9,8 +9,8 @@ ingress:
   # -- Name of the created ingress.
   name: "axelix-master"
 
-  # -- Namespace where the ingress is supposed to be created.
-  default: "default"
+  # -- Namespace where the ingress is supposed to be created. If not set, defaults to the release namespace.
+  namespace: ""
 
   # -- Class name of the ingress. Default is 'nginx'.
   className: "nginx"
@@ -55,18 +55,18 @@ serviceAccount:
 
   # -- Whether to create service account for the backend pods or rely on an existing one. Default - true (i.e. a new service
   # account should be created).
-  create: "true"
+  create: true
 
   # --  Namespace of the service account, where if not creating, existing service account resides. If new
   # service account will be created (see "create" setting), then this setting represents the name of the
-  # namespace where a new service account will be created.
-  namespace: "default"
+  # namespace where a new service account will be created. If not set, defaults to the release namespace.
+  namespace: ""
 
   # -- Annotations for the newly created service account. By default, there are no annotations. No-Op if "create: false".
   annotations: {}
 
-  # -- Whether to automount the service account into pod or not. Default is "true".
-  automount: "true"
+  # -- Whether to automount the service account into pod or not. Default is true.
+  automount: true
 
 # -- Custom pod spec.
 pod:
@@ -84,10 +84,10 @@ deployment:
   name: "axelix-master"
 
   # -- Custom labels for the K8S Axelix Master deployment
-  labels: ""
+  labels: {}
 
   # -- Custom annotations for the K8S Axelix Master deployment
-  annotations: ""
+  annotations: {}
 
 image:
 
@@ -135,9 +135,9 @@ tolerations: []
 # -- Configuration of the K8S Service resource for the Axelix Master.
 service:
 
-  # -- Whether the service should be crated or not. The default is "true". By default, the standard ClusterIP service
+  # -- Whether the service should be crated or not. The default is true. By default, the standard ClusterIP service
   # will be created.
-  create: "true"
+  create: true
 
   # -- The name of the service to be used.
   name: "axelix-master"
