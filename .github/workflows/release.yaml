@@ -35,7 +35,7 @@ jobs:
         with:
           chart-search-root: charts
           # Version of the helm-docs to be used
-          version: 1.14.2
+          version: v1.14.2
 
       # Generate values.schema.json from helm
       - name: Generate values.schema.json
