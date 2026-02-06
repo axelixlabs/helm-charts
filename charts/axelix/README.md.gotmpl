@@ -43,11 +43,8 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 
 ```console
 helm install my-release axelixlabs/axelix \
-  --set backend.replicaCount=2 \
-  --set backend.image.name=myregistry/axelix \
-  --set backend.image.tag=v1.0.0 \
-  --set frontend.image.name=myregistry/axelix-ui \
-  --set frontend.image.tag=v1.0.0
+  --set image.name=myregistry/axelix \
+  --set image.ref=v1.0.0 \
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example:
@@ -56,23 +53,13 @@ Alternatively, a YAML file that specifies the values for the parameters can be p
 helm install my-release axelixlabs/axelix -f values.yaml
 ```
 
-## Backend Configuration
+## App Configuration
 
-The backend component runs on port 8080 and handles the API endpoints. The backend service is exposed at `/api` path when ingress is enabled.
+By default, axelix-master container itself runs on port 8080 and handles the API endpoints. The backend service is exposed at `/api` path when ingress is enabled.
 
 ### Health Checks
 
 The backend includes health check endpoints:
-- Liveness: `/api/axelix/actuator/health/liveness`
-- Readiness: `/api/axelix/actuator/health/readiness`
-
-## Frontend Configuration
-
-The frontend component runs on port 80 and serves the web UI. The frontend service is exposed at `/` path when ingress is enabled.
-
-### Health Checks
-
-The frontend includes health check endpoints:
 - Liveness: `/api/axelix/actuator/health/liveness`
 - Readiness: `/api/axelix/actuator/health/readiness`
 
@@ -107,25 +94,6 @@ When `rbac.autoCreateRole` is enabled, the chart creates:
 - A `RoleBinding` that binds the backend service account to the role
 
 This allows the backend to monitor Kubernetes resources in the specified namespace.
-
-## Horizontal Pod Autoscaling (HPA)
-
-Both backend and frontend components support horizontal pod autoscaling. Enable HPA by setting `autoscaling.enabled` to `true`.
-
-### Example HPA Configuration
-
-```yaml
-backend:
-  autoscaling:
-    enabled: true
-    hpa:
-      minReplicas: 2
-      maxReplicas: 5
-      targetCPU: 70
-      targetMemory: 80
-```
-
-When HPA is enabled, the `replicaCount` parameter is ignored, and the deployment is managed by the HorizontalPodAutoscaler.
 
 ## Resource Management
 

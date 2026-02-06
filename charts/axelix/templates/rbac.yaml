@@ -3,7 +3,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "master.backend.serviceAccountName" $ }}-role
+  labels:
+    {{- include "master.labels.common" $ | nindent 4 }}
+  name: {{ $.Values.serviceAccount.name }}-role
   namespace: {{ $.Values.rbac.targetNamespace }}
 rules:
   - apiGroups: [""]
@@ -13,14 +15,16 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "master.backend.serviceAccountName" $ }}-role-binding
+  labels:
+    {{- include "master.labels.common" $ | nindent 4 }}
+  name: {{ $.Values.serviceAccount.name }}-role-binding
   namespace: {{ $.Values.rbac.targetNamespace }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "master.backend.serviceAccountName" $ }}
-    namespace: {{ $.Values.backend.serviceAccount.namespace }}
+    name: {{ $.Values.serviceAccount.name }}
+    namespace: {{ $.Values.serviceAccount.namespace }}
 roleRef:
   kind: Role
-  name: {{ include "master.backend.serviceAccountName" $ }}-role
+  name: {{ $.Values.serviceAccount.name }}-role
   apiGroup: rbac.authorization.k8s.io
 {{- end }}
