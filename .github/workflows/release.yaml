@@ -1,6 +1,13 @@
 name: Release Pipeline
 
 on:
+  workflow_dispatch:
+    inputs:
+      helm_chart_branch:
+        description: 'Helm charts branch name'
+        required: false
+        type: string
+        default: 'main'
   push:
     branches:
       - main
@@ -13,11 +20,16 @@ jobs:
     permissions:
       contents: write # to push chart release and create a release (helm/chart-releaser-action)
       packages: write # needed for ghcr access
-
+    env:
+      TARGET_BRANCH: ${{ github.event.inputs.helm_chart_branch || github.ref_name }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          # TODO: Do we really need to fetch the entire repo?
+          fetch-depth: 0
 
       - name: Setup Helm
         uses: azure/setup-helm@v4.3.0
