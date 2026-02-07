@@ -3,6 +3,18 @@ annotations:
   artifacthub.io/links: |
     - name: Charts Source
       url: https://github.com/axelixlabs/helm-charts
+    - name: Upstream Project
+      url: https://github.com/axelixlabs/axelix
+sources:
+  - https://github.com/axelixlabs/axelix
+  - https://github.com/axelixlabs/helm-charts
+maintainers:
+  - name: Mikhail Polivakha
+    email: mikhailpolivakha@gmail.com
+keywords:
+  - monitoring
+  - java
+  - spring-boot
 apiVersion: v2
 name: axelix
 description: Helm chart for deploying Axelix Master to Kubernetes
