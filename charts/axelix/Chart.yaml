@@ -16,6 +16,7 @@ keywords:
   - java
   - spring-boot
 apiVersion: v2
+icon: https://axelixlabs.github.io/helm-charts/logo.svg
 name: axelix
 description: Helm chart for deploying Axelix Master to Kubernetes
 home: https://axelix.io
