@@ -54,7 +54,7 @@ spec:
             failureThreshold: {{ $.Values.liveness.failureThreshold }}
             timeoutSeconds: {{ $.Values.liveness.timeoutSeconds }}
             httpGet:
-              path: /api/axelix/actuator/health/liveness
+              path: /api/actuator/health/liveness
               port: http
           readinessProbe:
             initialDelaySeconds: {{ $.Values.readiness.delay }}
@@ -62,7 +62,7 @@ spec:
             failureThreshold: {{ $.Values.readiness.failureThreshold }}
             timeoutSeconds: {{ $.Values.readiness.timeoutSeconds }}
             httpGet:
-              path: /api/axelix/actuator/health/readiness
+              path: /api/actuator/health/readiness
               port: http
           resources:
             {{- toYaml $.Values.resources | nindent 12 }}
