@@ -72,6 +72,37 @@ spec:
           {{- with $.Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          env:
+            - name: AXELIX_MASTER_DISCOVERY_AUTO
+              value: {{ $.Values.app.discovery.auto | quote }}
+
+            # Scan the same namespaces as ones where the access was requested
+            - name: AXELIX_MASTER_DISCOVERY_KUBERNETES_FILTERS
+              value: {{ $.Values.rbac.targetNamespaces }}
+
+            # JWT
+            - name: AXELIX_MASTER_AUTH_JWT_ALGORITHM
+              value: {{ $.Values.app.auth.jwt.algorithm | quote }}
+            - name: AXELIX_MASTER_AUTH_JWT_SIGNING_KEY
+              value: {{ $.Values.app.auth.jwt.signingKey | quote }}
+            - name: AXELIX_MASTER_AUTH_JWT_LIFESPAN
+              value: {{ $.Values.app.auth.jwt.lifespan | quote }}
+
+            # Cookies
+            - name: AXELIX_MASTER_AUTH_COOKIE_NAME
+              value: {{ $.Values.app.auth.cookie.name | quote }}
+            - name: AXELIX_MASTER_AUTH_COOKIE_SECURE
+              value: {{ $.Values.app.auth.cookie.secure | quote }}
+
+            # Static-admin auth
+            # TODO: As of not, this auth type is hardcoded.
+            # Later it would change as we adopt new auth types
+            - name: AXELIX_MASTER_AUTH_TYPE
+              value: static-admin
+            - name: AXELIX_MASTER_AUTH_STATIC_ADMIN_CREDENTIALS_USERNAME
+              value: {{ $.Values.app.auth.staticAdmin.credentials.username }}
+            - name: AXELIX_MASTER_AUTH_STATIC_ADMIN_CREDENTIALS_PASSWORD
+              value: {{ $.Values.app.auth.staticAdmin.credentials.password }}
       volumes:
         - name: tmp
           emptyDir: {}

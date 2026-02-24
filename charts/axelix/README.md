@@ -57,15 +57,25 @@ helm install my-release axelixlabs/axelix -f values.yaml
 
 By default, axelix-master container runs on port 8080 and handles both API endpoints and the UI. The service is exposed at `/` path when ingress is enabled.
 
+### Discovery
+
+When `app.discovery.auto` is `true` (default), Axelix Master discovers services by querying the Kubernetes API. The namespaces to scan are taken from `rbac.targetNamespaces`. Disable auto discovery if services register themselves with the master instead.
+
 ### Health Checks
 
 The axelix-master includes health check endpoints:
-- Liveness: `/api/axelix/actuator/health/liveness`
-- Readiness: `/api/axelix/actuator/health/readiness`
+- Liveness: `/api/actuator/health/liveness`
+- Readiness: `/api/actuator/health/readiness`
+
+Probe timing (initial delay, period, failure threshold, timeout) is configurable via `liveness` and `readiness` in values.
+
+## Service
+
+When `service.create` is `true` (default), the chart creates a ClusterIP Service for the Axelix Master (ports 8080:8080 by default). Port name, target, and source are configurable via `service.port`. Set `service.create` to `false` if you manage the service yourself.
 
 ## Ingress Configuration
 
-When `ingress.enabled` is set to `true`, the chart creates an Ingress resource that routes traffic to the axelix-master service (port 8080). By default, the ingress is created in the same namespace as the release. You can override this by setting `ingress.namespace`.
+When `ingress.enabled` is set to `true`, the chart creates an Ingress resource that routes traffic to the Axelix Master service (into service, port 8080). By default, the ingress is created in the same namespace as the release. You can override this by setting `ingress.namespace`. The ingress resource name is set via `ingress.name` (default: `axelix-master`).
 
 ### Example Ingress Configuration
 
@@ -83,17 +93,30 @@ ingress:
 
 ## Service Accounts and RBAC
 
-The chart can create a service account for the axelix-master component. By default, the service account is created in the same namespace as the release. You can override this by setting `serviceAccount.namespace`.
+When `serviceAccount.create` is `true` (default), the chart creates a service account for the axelix-master component. By default, the service account is created in the same namespace as the release. You can override this by setting `serviceAccount.namespace`. Use an existing service account by setting `serviceAccount.create` to `false` and setting `serviceAccount.name` (and optionally `serviceAccount.namespace`). Token automount is controlled by `serviceAccount.automount` (default: `true`).
 
 The service account can be granted permissions via RBAC to access Kubernetes resources.
 
 ### RBAC Configuration
 
-When `rbac.autoCreateRole` is enabled, the chart creates:
-- A `Role` in the `rbac.targetNamespace` with permissions to get, list, and watch pods, services, and endpoints
-- A `RoleBinding` that binds the axelix-master service account to the role
+When `rbac.autoCreateRole` is enabled, the chart creates per-namespace RBAC so a single service account can access multiple namespaces.
 
-This allows axelix-master to monitor Kubernetes resources in the specified namespace. Note that `rbac.targetNamespace` can be different from the release namespace if you want to monitor resources in a different namespace.
+For each namespace in `rbac.targetNamespaces`, the chart creates a `Role` and a `RoleBinding` in that namespace. The Role grants get, list, and watch on pods, services, and endpoints. The RoleBinding binds the axelix-master service account (from the release or `serviceAccount.namespace`) to that Role.
+
+**NOTE:** Even if you do not want the Roles and RoleBindings to be created (`autoCreateRole : false`), then `rbac.targetNamespaces` should still be specified, since this is the setting that not only means what namespaces needs to be granted access to, it also means the namespaces to be scanned by Axelix Master in order to register the services (regardless of who arranges the access - this Helm Chart, or you manually).
+
+Example for multiple namespaces:
+
+```yaml
+rbac:
+  autoCreateRole: true
+  targetNamespaces:
+    - default
+    - production
+    - staging
+```
+
+The service account is created once (either in the release namespace or `serviceAccount.namespace`) and is bound to a Role in each of the target namespaces, so Axelix Master can monitor resources in all of them.
 
 ## Resource Management
 

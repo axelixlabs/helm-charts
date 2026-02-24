@@ -31,10 +31,11 @@ ingress:
 
 rbac:
 
-  # -- The namespace where the pods that are supposed to be monitored by Axelix Master MUST reside.
-  # Inside this namespace role and role-binding will be created if 'autoCreateRole = true'. The default is
-  # 'default' namespace.
-  targetNamespace: "default"
+  # -- List of namespaces where the Axelix Master service account will be granted permissions. For each namespace,
+  # a Role and RoleBinding are created (when 'autoCreateRole = true'), so a single service account can access
+  # resources across multiple namespaces. The default namespace to be scanned is "default" namespace. These are
+  # the same namespaced that are going to be scanned for pods for auto-registration.
+  targetNamespaces: [ "default" ]
 
   # -- Whether to create the Role and Role-Binding for Axelix service account. Default is 'true'. If overridden
   # to false, then the end-user MUST ensure that Axelix service account either has required privileges to access the
@@ -154,3 +155,43 @@ service:
 
     # -- The source port of the ClusterIP service.
     source: 8080
+
+# -- The Axelix application-related settings.
+app:
+  # -- The auth-related settings.
+  auth:
+
+    # -- The auth cookie-related settings.
+    cookie:
+      # -- The default name of the cookie that stores the token.
+      name: auth_token
+      # -- Whether the cookie should be marked with 'Secured;' attribute in response from Axelix Master to the browser.
+      # In production environments this setting should be 'true', but to streamline the installation process the default is 'false'.
+      secure: true
+
+    # -- The JWT-related Axelix settings.
+    jwt:
+      # -- The algorithm to be used for signing the JWTs.
+      algorithm: # @schema required: true
+
+      # -- The algorithm to be used for signing the JWTs.
+      signingKey: # @schema required: true
+
+      # -- The lifespan of the created JWTs.
+      lifespan: 24h
+
+    # -- Static Admin-related settings
+    staticAdmin:
+      # -- Credentials of the static admin
+      credentials:
+        # -- Username of the static admin
+        username: axelix
+        # -- Password of the static admin
+        password: axelix
+
+  # -- The discovery mechanism-related settings.
+  discovery:
+    # -- Whether the auto discovery is enabled. Auto discovery means that the Axelix Master will itself try to discover the services
+    # to manage. It is achieved by Axelix master querying the K8S control plane API. Disabling this options will require configuring
+    # the managed services to register themselves inside the master.
+    auto: true
