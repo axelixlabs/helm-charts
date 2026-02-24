@@ -78,7 +78,7 @@ spec:
 
             # Scan the same namespaces as ones where the access was requested
             - name: AXELIX_MASTER_DISCOVERY_KUBERNETES_FILTERS
-              value: {{ $.Values.rbac.targetNamespaces }}
+              value: {{ $.Values.rbac.targetNamespaces | join "," | quote }}
 
             # JWT
             - name: AXELIX_MASTER_AUTH_JWT_ALGORITHM
