@@ -113,7 +113,7 @@ spec:
               value: {{ $.Values.app.auth.oauth2.clientId | quote }}
             - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_CLIENT_SECRET
               value: {{ $.Values.app.auth.oauth2.clientSecret | quote }}
-            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_APP_URI
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_REDIRECT_URI
               value: {{ $.Values.app.auth.oauth2.appUri | quote }}
       volumes:
         - name: tmp
