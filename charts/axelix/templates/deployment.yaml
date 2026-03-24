@@ -97,12 +97,24 @@ spec:
             # Static-admin auth
             # TODO: As of not, this auth type is hardcoded.
             # Later it would change as we adopt new auth types
-            - name: AXELIX_MASTER_AUTH_TYPE
-              value: static-admin
-            - name: AXELIX_MASTER_AUTH_STATIC_ADMIN_CREDENTIALS_USERNAME
+            - name: AXELIX_MASTER_AUTH_OPTIONS_STATIC_ADMIN_ENABLED
+              value: {{ $.Values.app.auth.staticAdmin.enabled | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_STATIC_ADMIN_CREDENTIALS_USERNAME
               value: {{ $.Values.app.auth.staticAdmin.credentials.username }}
-            - name: AXELIX_MASTER_AUTH_STATIC_ADMIN_CREDENTIALS_PASSWORD
+            - name: AXELIX_MASTER_AUTH_OPTIONS_STATIC_ADMIN_CREDENTIALS_PASSWORD
               value: {{ $.Values.app.auth.staticAdmin.credentials.password }}
+                        
+            # OAuth2
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_ENABLED
+              value: {{ $.Values.app.auth.oauth2.enabled | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_ISSUER_URI
+              value: {{ $.Values.app.auth.oauth2.issuerUri | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_CLIENT_ID
+              value: {{ $.Values.app.auth.oauth2.clientId | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_CLIENT_SECRET
+              value: {{ $.Values.app.auth.oauth2.clientSecret | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_APP_URI
+              value: {{ $.Values.app.auth.oauth2.appUri | quote }}
       volumes:
         - name: tmp
           emptyDir: {}

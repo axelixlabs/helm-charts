@@ -182,12 +182,30 @@ app:
 
     # -- Static Admin-related settings
     staticAdmin:
+      # -- Whether static admin authentication is enabled
+      enabled: true
       # -- Credentials of the static admin
       credentials:
         # -- Username of the static admin
         username: axelix
         # -- Password of the static admin
         password: axelix
+
+    # -- OAuth2/OIDC-related settings
+    oauth2:
+      # -- Whether OAuth2 authentication is enabled
+      # Can be used together with staticAdmin to support multiple auth providers
+      enabled: false
+      # -- The OIDC issuer URI (e.g., https://accounts.google.com for Google)
+      # This should point to the OIDC provider's discovery endpoint
+      issuerUri: ""
+      # -- The OAuth2 client ID obtained from the OIDC provider
+      clientId: ""
+      # -- The OAuth2 client secret obtained from the OIDC provider
+      clientSecret: ""
+      # -- The OAuth2 redirect URI where the OIDC provider will send the callback
+      # Example: https://your-domain.com
+      appUri: ""
 
   # -- The discovery mechanism-related settings.
   discovery:
