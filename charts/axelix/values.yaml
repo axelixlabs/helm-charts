@@ -205,6 +205,7 @@ app:
       clientSecret: ""
       # -- The OAuth2 redirect URI where the OIDC provider will send the callback
       # Example: https://your-domain.com
+      # # TODO correct it
       appUri: ""
 
   # -- The discovery mechanism-related settings.
