@@ -203,10 +203,10 @@ app:
       clientId: ""
       # -- The OAuth2 client secret obtained from the OIDC provider
       clientSecret: ""
-      # -- The OAuth2 redirect URI where the OIDC provider will send the callback
-      # Example: https://your-domain.com
-      # # TODO correct it
-      appUri: ""
+      # -- The base URL of your application.
+      # Used to automatically generate the redirect URI for the OAuth2/OIDC provider (callback).
+      # Example: https://example.com (no trailing slash)
+      baseUrl: ""
 
   # -- The discovery mechanism-related settings.
   discovery:

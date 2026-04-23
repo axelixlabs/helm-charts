@@ -113,9 +113,8 @@ spec:
               value: {{ $.Values.app.auth.oauth2.clientId | quote }}
             - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_CLIENT_SECRET
               value: {{ $.Values.app.auth.oauth2.clientSecret | quote }}
-            # TODO correct it
             - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_BASE_URL 
-              value: {{ $.Values.app.auth.oauth2.appUri | quote }}
+              value: {{ $.Values.app.auth.oauth2.baseUrl | quote }}
       volumes:
         - name: tmp
           emptyDir: {}
