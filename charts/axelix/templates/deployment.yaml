@@ -73,48 +73,65 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-            - name: AXELIX_MASTER_DISCOVERY_AUTO
-              value: {{ $.Values.app.discovery.auto | quote }}
-
-            # Scan the same namespaces as ones where the access was requested
-            - name: AXELIX_MASTER_DISCOVERY_KUBERNETES_FILTERS
-              value: {{ $.Values.rbac.targetNamespaces | join "," | quote }}
-
-            # JWT
-            - name: AXELIX_MASTER_AUTH_JWT_ALGORITHM
-              value: {{ $.Values.app.auth.jwt.algorithm | quote }}
-            - name: AXELIX_MASTER_AUTH_JWT_SIGNING_KEY
-              value: {{ $.Values.app.auth.jwt.signingKey | quote }}
-            - name: AXELIX_MASTER_AUTH_JWT_LIFESPAN
-              value: {{ $.Values.app.auth.jwt.lifespan | quote }}
-
-            # Cookies
-            - name: AXELIX_MASTER_AUTH_COOKIE_NAME
-              value: {{ $.Values.app.auth.cookie.name | quote }}
             - name: AXELIX_MASTER_AUTH_COOKIE_SECURE
-              value: {{ $.Values.app.auth.cookie.secure | quote }}
+              value: {{ $.Values.axelix.master.auth.cookie.secure | quote }}
 
-            # Static-admin auth
-            # TODO: As of not, this auth type is hardcoded.
-            # Later it would change as we adopt new auth types
-            - name: AXELIX_MASTER_AUTH_OPTIONS_STATIC_ADMIN_ENABLED
-              value: {{ $.Values.app.auth.staticAdmin.enabled | quote }}
-            - name: AXELIX_MASTER_AUTH_OPTIONS_STATIC_ADMIN_CREDENTIALS_USERNAME
-              value: {{ $.Values.app.auth.staticAdmin.credentials.username }}
-            - name: AXELIX_MASTER_AUTH_OPTIONS_STATIC_ADMIN_CREDENTIALS_PASSWORD
-              value: {{ $.Values.app.auth.staticAdmin.credentials.password }}
-                        
-            # OAuth2
+            - name: AXELIX_MASTER_AUTH_JWT_ALGORITHM
+              value: {{ $.Values.axelix.master.auth.jwt.algorithm | quote }}
+
+            - name: AXELIX_MASTER_AUTH_JWT_SIGNING_KEY
+              value: {{ $.Values.axelix.master.auth.jwt.signingKey | quote }}
+
+            - name: AXELIX_MASTER_AUTH_JWT_LIFESPAN
+              value: {{ $.Values.axelix.master.auth.jwt.lifespan | quote }}
+
+            - name: AXELIX_MASTER_AUTH_OPTIONS_SUPER_ADMIN_CREDENTIALS_USERNAME
+              value: {{ $.Values.axelix.master.auth.options.superAdmin.credentials.username | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_SUPER_ADMIN_CREDENTIALS_PASSWORD
+              value: {{ $.Values.axelix.master.auth.options.superAdmin.credentials.password | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_LOCAL_ENABLED
+              value: {{ $.Values.axelix.master.auth.options.local.enabled | quote }}
             - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_ENABLED
-              value: {{ $.Values.app.auth.oauth2.enabled | quote }}
+              value: {{ $.Values.axelix.master.auth.options.oauth2.enabled | quote }}
             - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_ISSUER_URI
-              value: {{ $.Values.app.auth.oauth2.issuerUri | quote }}
+              value: {{ $.Values.axelix.master.auth.options.oauth2.issuerUri | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_BASE_URL
+              value: {{ $.Values.axelix.master.auth.options.oauth2.baseUrl | quote }}
             - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_CLIENT_ID
-              value: {{ $.Values.app.auth.oauth2.clientId | quote }}
+              value: {{ $.Values.axelix.master.auth.options.oauth2.clientId | quote }}
             - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_CLIENT_SECRET
-              value: {{ $.Values.app.auth.oauth2.clientSecret | quote }}
-            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_BASE_URL 
-              value: {{ $.Values.app.auth.oauth2.baseUrl | quote }}
+              value: {{ $.Values.axelix.master.auth.options.oauth2.clientSecret | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_ROLE_ATTRIBUTE_PATH
+              value: {{ $.Values.axelix.master.auth.options.oauth2.roleAttributePath | quote }}
+            - name: AXELIX_MASTER_AUTH_OPTIONS_OAUTH2_SCOPES
+              value: {{ $.Values.axelix.master.auth.options.oauth2.scopes | quote }}
+
+            - name: AXELIX_MASTER_DATABASE_URL
+              value: {{ $.Values.axelix.master.database.url | quote }}
+            - name: AXELIX_MASTER_DATABASE_USERNAME
+              value: {{ $.Values.axelix.master.database.username | quote }}
+            - name: AXELIX_MASTER_DATABASE_PASSWORD
+              value: {{ $.Values.axelix.master.database.password | quote }}
+
+            - name: AXELIX_MASTER_DISCOVERY_SELF_REGISTRATION_ENABLED
+              value: {{ $.Values.axelix.master.discovery.selfRegistration.enabled | quote }}
+            - name: AXELIX_MASTER_DISCOVERY_SELF_REGISTRATION_EVICTION_HEARTBEAT_TIMEOUT
+              value: {{ $.Values.axelix.master.discovery.selfRegistration.eviction.heartbeatTimeout | quote }}
+            - name: AXELIX_MASTER_DISCOVERY_SELF_REGISTRATION_EVICTION_SCHEDULE
+              value: {{ $.Values.axelix.master.discovery.selfRegistration.eviction.schedule | quote }}
+
+            - name: AXELIX_MASTER_DISCOVERY_AUTO_ENABLED
+              value: {{ $.Values.axelix.master.discovery.auto.enabled | quote }}
+            - name: AXELIX_MASTER_DISCOVERY_AUTO_BROADCAST_SCHEDULE
+              value: {{ $.Values.axelix.master.discovery.auto.broadcast.schedule | quote }}
+            - name: AXELIX_MASTER_DISCOVERY_AUTO_KUBERNETES_KUBE_APISERVER_URL
+              value: {{ $.Values.axelix.master.discovery.auto.kubernetes.kubeApiserverUrl | quote }}
+            - name: AXELIX_MASTER_DISCOVERY_AUTO_KUBERNETES_SA_TOKEN_PATH
+              value: {{ $.Values.axelix.master.discovery.auto.kubernetes.saTokenPath | quote }}
+            - name: AXELIX_MASTER_DISCOVERY_AUTO_KUBERNETES_CA_CERT_PATH
+              value: {{ $.Values.axelix.master.discovery.auto.kubernetes.caCertPath | quote }}
+            - name: AXELIX_MASTER_DISCOVERY_AUTO_KUBERNETES_FILTERS_NAMESPACES
+              value: {{ $.Values.rbac.targetNamespaces | join "," | quote }}
       volumes:
         - name: tmp
           emptyDir: {}

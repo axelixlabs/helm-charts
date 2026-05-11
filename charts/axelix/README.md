@@ -59,7 +59,9 @@ By default, axelix-master container runs on port 8080 and handles both API endpo
 
 ### Discovery
 
-When `app.discovery.auto` is `true` (default), Axelix Master discovers services by querying the Kubernetes API. The namespaces to scan are taken from `rbac.targetNamespaces`. Disable auto discovery if services register themselves with the master instead.
+When `axelix.master.discovery.auto.enabled` is `true`, Axelix Master discovers services by querying the Kubernetes API. The namespaces to scan are configured via `rbac.targetNamespaces`.
+
+By default, `axelix.master.discovery.auto.enabled` is `false`. Enable automatic discovery only when you want Axelix Master to discover services from the cluster instead of relying on self-registration.
 
 ### Health Checks
 

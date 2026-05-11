@@ -157,60 +157,99 @@ service:
     source: 8080
 
 # -- The Axelix application-related settings.
-app:
-  # -- The auth-related settings.
-  auth:
+axelix:
+  master:
+    # -- The auth-related settings.
+    auth:
+      # -- The auth cookie-related settings.
+      cookie:
+        # -- Whether the cookie should be marked with 'Secured;' attribute in response from Axelix Master to the browser.
+        # In production environments this setting should be 'true', but to streamline the installation process the default is 'false'.
+        secure: true
+      # -- The JWT-related Axelix settings.
+      jwt:
+        # -- The algorithm to be used for signing the JWTs.
+        algorithm: # @schema required: true
 
-    # -- The auth cookie-related settings.
-    cookie:
-      # -- The default name of the cookie that stores the token.
-      name: auth_token
-      # -- Whether the cookie should be marked with 'Secured;' attribute in response from Axelix Master to the browser.
-      # In production environments this setting should be 'true', but to streamline the installation process the default is 'false'.
-      secure: false
+        # -- The algorithm to be used for signing the JWTs.
+        signingKey: # @schema required: true
 
-    # -- The JWT-related Axelix settings.
-    jwt:
-      # -- The algorithm to be used for signing the JWTs.
-      algorithm: # @schema required: true
+        # -- The lifespan of the created JWTs.
+        lifespan: 12h
+      options:
+        # -- Super-Admin login configuration options.
+        superAdmin:
+          # -- Credentials of the Super-Admin.
+          credentials:
+            # -- Username of the Super-Admin.
+            username: admin
+            # -- Password of the Super-Admin.
+            password: admin
+        # -- Local login (via a local database) configuration options.
+        local:
+          # -- Whether the Local login is enabled.
+          enabled: false
+        # -- Login via OIDC/OAuth2 configuration options.
+        oauth2:
+          # -- Whether the login via OIDC/OAuth2 configuration options.
+          enabled: false
+          # -- The URL of the OIDC issuer. Required if the OIDC/OAuth2 Login flow is enabled.
+          issuerUri:
+          # -- Base URL of this Axelix Master distribution. This is the URL that must point to the Axelix Master, i.e. the URL
+          # from which Axelix Master is available. Required if the OIDC/OAuth2 Login flow is enabled.
+          baseUrl:
+          # -- The OAuth2 client-id. Required if the OIDC/OAuth2 Login flow is enabled.
+          clientId:
+          # -- The OAuth2 client-secret. Required if the OIDC/OAuth2 Login flow is enabled.
+          clientSecret:
+          # -- The JMESPath expression to be used for extracting/deducing the role from the /userinfo endpoint response.
+          # If not specified, then any user that logs-in via OIDC flow has only VIEWER role by default.
+          roleAttributePath:
+          # -- The scopes to be requested during OAuth2 flow by the Axelix Master. OpenID scope is mandatory, since Axelix Master needs it to get the id_token.
+          scopes: openid
+    # -- Axelix Master settings related to the database
+    database:
+      # -- JDBC URL to be used when connecting to the database. By default, Axelix Master uses SQLite.
+      url: jdbc:sqlite:axelix.db
+      # -- Username to be used when accessing the database.
+      username: ""
+      # -- Password to be used when accessing the database.
+      password:
+    # -- Discovery-related settings.
+    discovery:
+      # -- Settings related to self-registration mechanism.
+      selfRegistration:
+        # -- Whether the self-registration is enabled in master. By default, self-registration is disabled.
+        enabled: false
+        # -- Settings related to eviction of self-registered instances. Make sense only in case the self-registration is enabled.
+        eviction:
+          # -- The interval during which the Axelix Master, if have not received any heartbeats, assumes the instance to be
+          # unavailable and thus de-registers it internally.
+          heartbeatTimeout: 45s
 
-      # -- The algorithm to be used for signing the JWTs.
-      signingKey: # @schema required: true
+          # -- Cron schedule of the periodic job that cleans up the stale self-registered instances.
+          schedule: "0 * * * * *"
+      # -- Settings related to automatic discovery mechanism.
+      auto:
+        # -- Whether the self-registration is enabled in master. By default, automatic discovery is enabled.
+        enabled: false
+        # -- Settings related to automatic discovery job. Make sense only in case the automatic discovery is enabled.
+        broadcast:
+          # -- Cron schedule of the periodic job that automatically scans the K8S cluster for Spring Boot services to be managed.
+          schedule: "0 * * * * *"
 
-      # -- The lifespan of the created JWTs.
-      lifespan: 24h
-
-    # -- Static Admin-related settings
-    staticAdmin:
-      # -- Whether static admin authentication is enabled
-      enabled: true
-      # -- Credentials of the static admin
-      credentials:
-        # -- Username of the static admin
-        username: axelix
-        # -- Password of the static admin
-        password: axelix
-
-    # -- OAuth2/OIDC-related settings
-    oauth2:
-      # -- Whether OAuth2 authentication is enabled
-      # Can be used together with staticAdmin to support multiple auth providers
-      enabled: false
-      # -- The OIDC issuer URI (e.g., https://accounts.google.com for Google)
-      # This should point to the OIDC provider's discovery endpoint
-      issuerUri: ""
-      # -- The OAuth2 client ID obtained from the OIDC provider
-      clientId: ""
-      # -- The OAuth2 client secret obtained from the OIDC provider
-      clientSecret: ""
-      # -- The base URL of your application.
-      # Used to automatically generate the redirect URI for the OAuth2/OIDC provider (callback).
-      # Example: https://example.com (no trailing slash)
-      baseUrl: ""
-
-  # -- The discovery mechanism-related settings.
-  discovery:
-    # -- Whether the auto discovery is enabled. Auto discovery means that the Axelix Master will itself try to discover the services
-    # to manage. It is achieved by Axelix master querying the K8S control plane API. Disabling this options will require configuring
-    # the managed services to register themselves inside the master.
-    auto: true
+        # -- K8S-related settings. When performing automatic discovery, Axelix Master queries the K8S Control Plane, thus it needs certain.
+        # configuration to make things right.
+        kubernetes:
+          # -- The URL of the K8S Api Server. By default, it is constructed from the environment variables, that are supposed to be injected in
+          # every pod. Can be overridden, if needed.
+          kubeApiserverUrl: https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}
+          # -- The path to the Service Account token inside the Axelix Master pods.
+          saTokenPath: /var/run/secrets/kubernetes.io/serviceaccount/token
+          # -- The path to the Certification Authority certificate (need so the Axelix Master can trust the K8S Control Plane).
+          caCertPath: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          # -- Filters, applies during the automatic discovery (e.g. Axelix Master may scan only pods with the given labels).
+          filters:
+            # -- Labels of the pods that are supposed to be managed by Axelix. There is a special placeholder "*" (the star)
+            # that signals that any value of the label is acceptable.
+            labels: {}

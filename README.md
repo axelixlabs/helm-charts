@@ -42,4 +42,4 @@ We'd love to have you contribute! Please refer to our [contribution guidelines](
 
 ## License
 
-[MIT License](https://github.com/axelixlabs/helm-charts/blob/main/LICENSE).
+This chart is available under [MIT License](https://github.com/axelixlabs/helm-charts/blob/main/LICENSE).

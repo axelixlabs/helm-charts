@@ -1,3 +1,4 @@
+# TODO: Sing the helm chart before publication
 sign: false
 
 # Enable automatic generation of release notes using GitHubs release notes generator.
