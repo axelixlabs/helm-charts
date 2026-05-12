@@ -232,7 +232,7 @@ axelix:
       # -- Settings related to automatic discovery mechanism.
       auto:
         # -- Whether the self-registration is enabled in master. By default, automatic discovery is enabled.
-        enabled: false
+        enabled: true
         # -- Settings related to automatic discovery job. Make sense only in case the automatic discovery is enabled.
         broadcast:
           # -- Cron schedule of the periodic job that automatically scans the K8S cluster for Spring Boot services to be managed.
