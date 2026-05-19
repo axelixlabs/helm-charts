@@ -75,10 +75,6 @@ spec:
           env:
             - name: AXELIX_MASTER_AUTH_COOKIE_SECURE
               value: {{ $.Values.axelix.master.auth.cookie.secure | quote }}
-            - name: AXELIX_MASTER_AUTH_COOKIE_NAME
-              value: {{ $.Values.axelix.master.auth.cookie.name | quote }}
-            - name: AXELIX_MASTER_AUTH_COOKIE_NAME_AUTHORITY
-              value: {{ $.Values.axelix.master.auth.cookie.nameAuthority | quote }}
 
             - name: AXELIX_MASTER_AUTH_JWT_ALGORITHM
               value: {{ $.Values.axelix.master.auth.jwt.algorithm | quote }}

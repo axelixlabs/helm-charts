@@ -166,10 +166,6 @@ axelix:
         # -- Whether the cookie should be marked with 'Secured;' attribute in response from Axelix Master to the browser.
         # In production environments this setting should be 'true', but to streamline the installation process the default is 'false'.
         secure: true
-        # -- The name of the authentication cookie set by Axelix Master in the browser.
-        name: auth_token
-        # -- The name of the cookie that stores the encoded authorities of the authenticated user.
-        nameAuthority: authorities
 
       # -- The JWT-related Axelix settings.
       jwt:
