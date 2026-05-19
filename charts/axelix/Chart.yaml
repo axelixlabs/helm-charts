@@ -1,5 +1,6 @@
 annotations:
   artifacthub.io/license: MIT
+  artifacthub.io/prerelease: "true"
   artifacthub.io/links: |
     - name: Charts Source
       url: https://github.com/axelixlabs/helm-charts

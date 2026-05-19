@@ -166,16 +166,21 @@ axelix:
         # -- Whether the cookie should be marked with 'Secured;' attribute in response from Axelix Master to the browser.
         # In production environments this setting should be 'true', but to streamline the installation process the default is 'false'.
         secure: true
+        # -- The name of the authentication cookie set by Axelix Master in the browser.
+        name: auth_token
+        # -- The name of the cookie that stores the encoded authorities of the authenticated user.
+        nameAuthority: authorities
+
       # -- The JWT-related Axelix settings.
       jwt:
         # -- The algorithm to be used for signing the JWTs.
         algorithm: # @schema required: true
-
         # -- The algorithm to be used for signing the JWTs.
         signingKey: # @schema required: true
-
         # -- The lifespan of the created JWTs.
         lifespan: 12h
+
+      # -- The auth-options settings.
       options:
         # -- Super-Admin login configuration options.
         superAdmin:
@@ -207,6 +212,7 @@ axelix:
           roleAttributePath:
           # -- The scopes to be requested during OAuth2 flow by the Axelix Master. OpenID scope is mandatory, since Axelix Master needs it to get the id_token.
           scopes: openid
+
     # -- Axelix Master settings related to the database
     database:
       # -- JDBC URL to be used when connecting to the database. By default, Axelix Master uses SQLite.
@@ -215,6 +221,7 @@ axelix:
       username: ""
       # -- Password to be used when accessing the database.
       password:
+
     # -- Discovery-related settings.
     discovery:
       # -- Settings related to self-registration mechanism.
@@ -226,9 +233,9 @@ axelix:
           # -- The interval during which the Axelix Master, if have not received any heartbeats, assumes the instance to be
           # unavailable and thus de-registers it internally.
           heartbeatTimeout: 45s
-
           # -- Cron schedule of the periodic job that cleans up the stale self-registered instances.
           schedule: "0 * * * * *"
+
       # -- Settings related to automatic discovery mechanism.
       auto:
         # -- Whether the self-registration is enabled in master. By default, automatic discovery is enabled.
@@ -237,7 +244,6 @@ axelix:
         broadcast:
           # -- Cron schedule of the periodic job that automatically scans the K8S cluster for Spring Boot services to be managed.
           schedule: "0 * * * * *"
-
         # -- K8S-related settings. When performing automatic discovery, Axelix Master queries the K8S Control Plane, thus it needs certain.
         # configuration to make things right.
         kubernetes:
@@ -253,3 +259,9 @@ axelix:
             # -- Labels of the pods that are supposed to be managed by Axelix. There is a special placeholder "*" (the star)
             # that signals that any value of the label is acceptable.
             labels: {}
+
+    # -- MCP Server related settings.
+    mcpServer:
+        # -- Whether the MCP Server is enabled. When enabled, Axelix Master exposes an MCP-compatible
+        # endpoint at /api/mcp that can be used by MCP clients. Default is 'true'.
+        enabled: true
