@@ -78,10 +78,8 @@ spec:
 
             - name: AXELIX_MASTER_AUTH_JWT_ALGORITHM
               value: {{ $.Values.axelix.master.auth.jwt.algorithm | quote }}
-
             - name: AXELIX_MASTER_AUTH_JWT_SIGNING_KEY
               value: {{ $.Values.axelix.master.auth.jwt.signingKey | quote }}
-
             - name: AXELIX_MASTER_AUTH_JWT_LIFESPAN
               value: {{ $.Values.axelix.master.auth.jwt.lifespan | quote }}
 
@@ -132,6 +130,9 @@ spec:
               value: {{ $.Values.axelix.master.discovery.auto.kubernetes.caCertPath | quote }}
             - name: AXELIX_MASTER_DISCOVERY_AUTO_KUBERNETES_FILTERS_NAMESPACES
               value: {{ $.Values.rbac.targetNamespaces | join "," | quote }}
+                        
+            - name: AXELIX_MASTER_MCP_SERVER_ENABLED
+              value: {{ $.Values.axelix.master.mcpServer.enabled | quote }}
       volumes:
         - name: tmp
           emptyDir: {}
