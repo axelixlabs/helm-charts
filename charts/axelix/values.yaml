@@ -164,7 +164,7 @@ axelix:
       # -- The auth cookie-related settings.
       cookie:
         # -- Whether the cookie should be marked with 'Secured;' attribute in response from Axelix Master to the browser.
-        # In production environments this setting should be 'true', but to streamline the installation process the default is 'false'.
+        # In production environments this setting should be 'true'.
         secure: true
 
       # -- The JWT-related Axelix settings.
