@@ -195,17 +195,17 @@ axelix:
           # -- Whether the login via OIDC/OAuth2 configuration options.
           enabled: false
           # -- The URL of the OIDC issuer. Required if the OIDC/OAuth2 Login flow is enabled.
-          issuerUri:
+          issuerUri: ""
           # -- Base URL of this Axelix Master distribution. This is the URL that must point to the Axelix Master, i.e. the URL
           # from which Axelix Master is available. Required if the OIDC/OAuth2 Login flow is enabled.
-          baseUrl:
+          baseUrl: ""
           # -- The OAuth2 client-id. Required if the OIDC/OAuth2 Login flow is enabled.
-          clientId:
+          clientId: ""
           # -- The OAuth2 client-secret. Required if the OIDC/OAuth2 Login flow is enabled.
-          clientSecret:
+          clientSecret: ""
           # -- The JMESPath expression to be used for extracting/deducing the role from the /userinfo endpoint response.
           # If not specified, then any user that logs-in via OIDC flow has only VIEWER role by default.
-          roleAttributePath:
+          roleAttributePath: ""
           # -- The scopes to be requested during OAuth2 flow by the Axelix Master. OpenID scope is mandatory, since Axelix Master needs it to get the id_token.
           scopes: openid
 
@@ -216,7 +216,7 @@ axelix:
       # -- Username to be used when accessing the database.
       username: ""
       # -- Password to be used when accessing the database.
-      password:
+      password: ""
 
     # -- Discovery-related settings.
     discovery:
