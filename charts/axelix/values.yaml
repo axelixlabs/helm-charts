@@ -169,10 +169,10 @@ axelix:
 
       # -- The JWT-related Axelix settings.
       jwt:
-        # -- (string) The algorithm to be used for signing the JWTs.
-        algorithm: # @schema required: true
-        # -- (string) The algorithm to be used for signing the JWTs.
-        signingKey: # @schema required: true
+        # -- The algorithm to be used for signing the JWTs.
+        algorithm: "" # @schema required: true
+        # -- The algorithm to be used for signing the JWTs.
+        signingKey: "" # @schema required: true
         # -- The lifespan of the created JWTs.
         lifespan: 12h
 
