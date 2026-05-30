@@ -31,11 +31,6 @@ jobs:
           # TODO: Do we really need to fetch the entire repo?
           fetch-depth: 0
 
-      - name: Setup Helm
-        uses: azure/setup-helm@v4.3.0
-        with:
-          version: v3.14.0
-
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
@@ -50,15 +45,23 @@ jobs:
           # Version of the helm-docs to be used
           version: v1.14.2
 
-      # Generate values.schema.json from helm
+      - name: Setup Helm
+        uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.14.0
+
       - name: Generate values.schema.json
         uses: losisin/helm-values-schema-json-action@v2
         with:
-          # Use '--' style comments for description purposes
           useHelmDocs: true
           # Working around bug https://github.com/losisin/helm-values-schema-json-action/pull/408
           # TODO: that will not work in case we would have multiple charts
           values: charts/axelix/values.yaml
+
+      - name: Validate axelix values schema
+        uses: ./.github/actions/validate-helm-values-schema
+        with:
+          schema: values.schema.json
 
       - name: Copy values schema
         run: cp values.schema.json charts/axelix/

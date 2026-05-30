@@ -1,0 +1,13 @@
+name: Validate Helm values schema
+description: Verify a values.schema.json file has no properties with type "null"
+inputs:
+  schema:
+    description: Path to the values.schema.json file to validate
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Verify schema has no null types
+      shell: bash
+      run: |
+        "${{ github.action_path }}/verify-no-null-types.sh" "${{ inputs.schema }}"

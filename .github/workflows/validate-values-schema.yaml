@@ -1,0 +1,30 @@
+name: Validate values schema
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-axelix-values-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.14.0
+
+      - name: Generate values.schema.json
+        uses: losisin/helm-values-schema-json-action@v2
+        with:
+          useHelmDocs: true
+          values: charts/axelix/values.yaml
+
+      - name: Validate axelix values schema
+        uses: ./.github/actions/validate-helm-values-schema
+        with:
+          schema: values.schema.json
