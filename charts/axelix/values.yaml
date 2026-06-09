@@ -93,9 +93,9 @@ deployment:
 
 image:
 
-  # -- Reference to the axelix master image to be used. Can either be a human-readable "tag" like v1.0.0-m1, or
+  # -- Reference to the axelix master image to be used. Can either be a human-readable "tag" like 1.0.0-m2, or
   # might be the sha256 image hash, like sha256:<SHA_VALUE>
-  ref: "v1.0.0-m1"
+  ref: "1.0.0-m2"
 
   # -- Name of the image, including repository prefix, like "ghcr.io/axelixlabs/axelix"
   name: "ghcr.io/axelixlabs/axelix"
