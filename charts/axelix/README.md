@@ -44,7 +44,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```console
 helm install my-release axelixlabs/axelix \
   --set image.name=myregistry/axelix \
-  --set image.ref=1.0.1 \
+  --set image.ref=1.0.2 \
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example:
@@ -185,7 +185,7 @@ Configure the container image:
 ```yaml
 image:
   name: "ghcr.io/axelixlabs/axelix"
-  ref: "1.0.1"
+  ref: "1.0.2"
   pullPolicy: "IfNotPresent"
 ```
 
