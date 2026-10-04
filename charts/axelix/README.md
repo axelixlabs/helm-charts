@@ -71,6 +71,93 @@ The axelix-master includes health check endpoints:
 
 Probe timing (initial delay, period, failure threshold, timeout) is configurable via `liveness` and `readiness` in values.
 
+### External Configuration
+
+Axelix Master can load part (or all) of its configuration from an external source at startup. Two sources are supported and can be enabled independently via `axelix.master.externalConfig`.
+
+#### Spring Cloud Config Server
+
+Set `axelix.master.externalConfig.springCloudConfig.enabled` to `true` and point `uri` at your Config Server:
+
+```yaml
+axelix:
+  master:
+    externalConfig:
+      springCloudConfig:
+        enabled: true
+        uri: "http://config-server:8888"
+        label: main          # git branch/tag (default: master)
+        name: axelix-master  # application name to fetch (default: the Axelix application name)
+        username: ""         # optional HTTP Basic auth
+        password: ""
+```
+
+#### HashiCorp Vault
+
+Set `axelix.master.externalConfig.springCloudVault.enabled` to `true`. The most common connection options (`uri`, `authentication`, `token`) and the KV secrets-engine settings (`kv.*`) are exposed as first-class values:
+
+```yaml
+axelix:
+  master:
+    externalConfig:
+      springCloudVault:
+        enabled: true
+        uri: "https://vault:8200"
+        authentication: "TOKEN"   # TOKEN | KUBERNETES | APPROLE | ...
+        token: "s.xxxxxxxx"
+        kv:
+          enabled: true
+          backend: secret          # KV mount name
+          defaultContext: application
+```
+
+Vault exposes a large connection/authentication surface (approle, Kubernetes auth, TLS, namespace, ...). Only the common options are first-class; any other Spring Cloud Vault property can be supplied through the top-level `extraEnv` using the `AXELIX_MASTER_EXTERNAL_CONFIG_SPRING_CLOUD_VAULT_*` prefix — see [Additional Environment Variables](#additional-environment-variables).
+
+### Metrics and Observability
+
+Axelix Master can export metrics to an OpenTelemetry (OTLP) collector and/or expose a Prometheus scrape endpoint. Both are disabled by default and configured under `axelix.master.metrics`.
+
+```yaml
+axelix:
+  master:
+    metrics:
+      otlp:
+        enabled: true
+        url: "http://otel-collector:4318/v1/metrics"   # required when enabled
+        step: 1m
+        compressionMode: none        # none | gzip
+        headers:                     # added to every export request
+          x-scope-orgid: tenant-1
+      prometheus:
+        enabled: true
+        # port: 9090                 # optional dedicated port; defaults to the actuator port (8080)
+        tags:
+          region: eu
+```
+
+When `prometheus.enabled` is `true`, metrics are exposed at `/api/actuator/prometheus`. If `prometheus.port` is set, the endpoint is served by a dedicated HTTP server on that port and the chart also declares a matching container port named `prometheus` (you are responsible for exposing it via a Service if you scrape it externally). `headers` and `tags` keys should be simple (letters/digits); for keys containing other characters, set them via `extraEnv`.
+
+### Structured Logging
+
+Set `axelix.master.logging.json.enabled` to `true` to emit logs as ECS-structured JSON (useful for log aggregation). The logical environment name set via `axelix.master.environment` (e.g. `production`) is attached to the structured output.
+
+### Additional Environment Variables
+
+Any Axelix Master property that is not surfaced as a first-class value can be injected directly through `extraEnv`, a list of standard Kubernetes environment entries. This is the recommended escape hatch for advanced HashiCorp Vault settings:
+
+```yaml
+extraEnv:
+  - name: AXELIX_MASTER_EXTERNAL_CONFIG_SPRING_CLOUD_VAULT_AUTHENTICATION
+    value: "KUBERNETES"
+  - name: AXELIX_MASTER_EXTERNAL_CONFIG_SPRING_CLOUD_VAULT_KUBERNETES_ROLE
+    value: "axelix-master"
+  - name: AXELIX_MASTER_DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: axelix-db
+        key: password
+```
+
 ## Service
 
 When `service.create` is `true` (default), the chart creates a ClusterIP Service for the Axelix Master (ports 8080:8080 by default). Port name, target, and source are configurable via `service.port`. Set `service.create` to `false` if you manage the service yourself.
