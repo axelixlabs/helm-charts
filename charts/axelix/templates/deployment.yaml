@@ -18,6 +18,11 @@ spec:
   #  nor it supports the HPA. The reason is the internal design of Axelix Master. We're gonna
   #  address that if we're going to see the need from the community.
   replicas: 1
+  # Axelix Master applies database migrations on startup and is not built to run next to another Master version
+  # against the same database. The default RollingUpdate strategy briefly runs the old and the new pod side by
+  # side (even with a single replica), so the old pod must be gone before the new one starts.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "master.selectorLabels" $ | nindent 6 }}

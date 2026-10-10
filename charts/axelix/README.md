@@ -85,6 +85,10 @@ axelix:
         signingKey: "<long-random-value>"
 ```
 
+### Upgrades
+
+The Axelix Master Deployment uses the `Recreate` strategy: on `helm upgrade` the running pod is stopped before the new one starts. Axelix Master applies database migrations on startup, and two different Master versions must never run against the same database at the same time. This means a short downtime of the Axelix Master UI and API during an upgrade; the managed services are not affected and re-register on their own.
+
 ### Discovery
 
 When `axelix.master.discovery.auto.enabled` is `true`, Axelix Master discovers services by querying the Kubernetes API. The namespaces to scan are configured via `rbac.targetNamespaces`.
