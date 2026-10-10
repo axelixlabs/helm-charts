@@ -44,7 +44,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```console
 helm install my-release axelixlabs/axelix \
   --set image.name=myregistry/axelix \
-  --set image.ref=1.1.0 \
+  --set image.ref=1.2.0 \
 ```
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example:
@@ -94,22 +94,6 @@ The Axelix Master Deployment uses the `Recreate` strategy: on `helm upgrade` the
 When `axelix.master.discovery.auto.enabled` is `true`, Axelix Master discovers services by querying the Kubernetes API. The namespaces to scan are configured via `rbac.targetNamespaces`.
 
 Unlike a standalone Axelix Master (where self-registration is the default), this chart enables automatic discovery by default: `axelix.master.discovery.auto.enabled` is `true` and `axelix.master.discovery.selfRegistration.enabled` is `false`. Set them the other way around if you want the services to self-register instead of being discovered from the cluster.
-
-To narrow the scan down to the Services carrying certain labels, use `axelix.master.discovery.auto.kubernetes.filters.labels`. The special value `*` matches any value of the label:
-
-```yaml
-axelix:
-  master:
-    discovery:
-      auto:
-        kubernetes:
-          filters:
-            labels:
-              app.kubernetes.io/part-of: "shop"
-              axelix/managed: "*"
-```
-
-Kubernetes label keys cannot be expressed as environment variable names, so the chart hands these filters to Axelix Master through the `SPRING_APPLICATION_JSON` environment variable. Do not set that variable yourself via `extraEnv` when label filters are used.
 
 ### Health Checks
 
@@ -320,7 +304,7 @@ Configure the container image:
 ```yaml
 image:
   name: "ghcr.io/axelixlabs/axelix"
-  ref: "1.1.0"
+  ref: "1.2.0"
   pullPolicy: "IfNotPresent"
 ```
 
