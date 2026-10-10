@@ -256,7 +256,7 @@ axelix:
 
       # -- Settings related to automatic discovery mechanism.
       auto:
-        # -- Whether the self-registration is enabled in master. By default, automatic discovery is enabled.
+        # -- Whether the automatic discovery is enabled in master. By default, automatic discovery is enabled.
         enabled: true
         # -- Settings related to automatic discovery job. Make sense only in case the automatic discovery is enabled.
         broadcast:
