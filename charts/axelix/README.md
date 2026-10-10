@@ -55,13 +55,61 @@ helm install my-release axelixlabs/axelix -f values.yaml
 
 ## App Configuration
 
-By default, axelix-master container runs on port 8080 and handles both API endpoints and the UI. The service is exposed at `/` path when ingress is enabled.
+By default, axelix-master container runs on port 2935 and handles both API endpoints and the UI. The service is exposed at `/` path when ingress is enabled.
+
+### HTTP Port
+
+The port Axelix Master listens on is set via `axelix.master.port`. The chart uses it for the container port, the probes and, unless `service.port.target` is set explicitly, for the target port of the Service.
+
+Since Axelix 1.2.0 the default is `2935`; before that it was `8080`. If your environment relies on the old port (e.g. the `axelix.sbs.discovery.master-url` of self-registering services, or network policies), you can keep it:
+
+```yaml
+axelix:
+  master:
+    port: 8080
+service:
+  port:
+    source: 8080
+```
+
+### JWT
+
+`axelix.master.auth.jwt.algorithm` and `axelix.master.auth.jwt.signingKey` are optional since Axelix 1.2.0. When they are left empty, Axelix Master falls back to `HMAC512` and a built-in signing key, and logs a warning at startup. The built-in key is publicly known, so it is suitable for a trial only - in any real environment set your own key, and the same key in every managed service:
+
+```yaml
+axelix:
+  master:
+    auth:
+      jwt:
+        algorithm: "HMAC512"
+        signingKey: "<long-random-value>"
+```
+
+### Upgrades
+
+The Axelix Master Deployment uses the `Recreate` strategy: on `helm upgrade` the running pod is stopped before the new one starts. Axelix Master applies database migrations on startup, and two different Master versions must never run against the same database at the same time. This means a short downtime of the Axelix Master UI and API during an upgrade; the managed services are not affected and re-register on their own.
 
 ### Discovery
 
 When `axelix.master.discovery.auto.enabled` is `true`, Axelix Master discovers services by querying the Kubernetes API. The namespaces to scan are configured via `rbac.targetNamespaces`.
 
-By default, `axelix.master.discovery.auto.enabled` is `false`. Enable automatic discovery only when you want Axelix Master to discover services from the cluster instead of relying on self-registration.
+Unlike a standalone Axelix Master (where self-registration is the default), this chart enables automatic discovery by default: `axelix.master.discovery.auto.enabled` is `true` and `axelix.master.discovery.selfRegistration.enabled` is `false`. Set them the other way around if you want the services to self-register instead of being discovered from the cluster.
+
+To narrow the scan down to the Services carrying certain labels, use `axelix.master.discovery.auto.kubernetes.filters.labels`. The special value `*` matches any value of the label:
+
+```yaml
+axelix:
+  master:
+    discovery:
+      auto:
+        kubernetes:
+          filters:
+            labels:
+              app.kubernetes.io/part-of: "shop"
+              axelix/managed: "*"
+```
+
+Kubernetes label keys cannot be expressed as environment variable names, so the chart hands these filters to Axelix Master through the `SPRING_APPLICATION_JSON` environment variable. Do not set that variable yourself via `extraEnv` when label filters are used.
 
 ### Health Checks
 
@@ -130,7 +178,7 @@ axelix:
           x-scope-orgid: tenant-1
       prometheus:
         enabled: true
-        # port: 9090                 # optional dedicated port; defaults to the actuator port (8080)
+        # port: 9090                 # optional dedicated port; defaults to the Axelix Master port
         tags:
           region: eu
 ```
@@ -160,11 +208,11 @@ extraEnv:
 
 ## Service
 
-When `service.create` is `true` (default), the chart creates a ClusterIP Service for the Axelix Master (ports 8080:8080 by default). Port name, target, and source are configurable via `service.port`. Set `service.create` to `false` if you manage the service yourself.
+When `service.create` is `true` (default), the chart creates a ClusterIP Service for the Axelix Master (ports 2935:2935 by default). Port name, target, and source are configurable via `service.port`; the target port follows `axelix.master.port` unless set explicitly. Set `service.create` to `false` if you manage the service yourself.
 
 ## Ingress Configuration
 
-When `ingress.enabled` is set to `true`, the chart creates an Ingress resource that routes traffic to the Axelix Master service (into service, port 8080). By default, the ingress is created in the same namespace as the release. You can override this by setting `ingress.namespace`. The ingress resource name is set via `ingress.name` (default: `axelix-master`).
+When `ingress.enabled` is set to `true`, the chart creates an Ingress resource that routes traffic to the Axelix Master service (into service, port 2935). By default, the ingress is created in the same namespace as the release. You can override this by setting `ingress.namespace`. The ingress resource name is set via `ingress.name` (default: `axelix-master`).
 
 ### Example Ingress Configuration
 

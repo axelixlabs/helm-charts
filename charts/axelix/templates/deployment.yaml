@@ -18,6 +18,11 @@ spec:
   #  nor it supports the HPA. The reason is the internal design of Axelix Master. We're gonna
   #  address that if we're going to see the need from the community.
   replicas: 1
+  # Axelix Master applies database migrations on startup and is not built to run next to another Master version
+  # against the same database. The default RollingUpdate strategy briefly runs the old and the new pod side by
+  # side (even with a single replica), so the old pod must be gone before the new one starts.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       {{- include "master.selectorLabels" $ | nindent 6 }}
@@ -46,7 +51,7 @@ spec:
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ $.Values.axelix.master.port }}
               protocol: TCP
             {{- if and $.Values.axelix.master.metrics.prometheus.enabled $.Values.axelix.master.metrics.prometheus.port }}
             - name: prometheus
@@ -78,13 +83,20 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
+            - name: AXELIX_MASTER_PORT
+              value: {{ $.Values.axelix.master.port | quote }}
+
             - name: AXELIX_MASTER_AUTH_COOKIE_SECURE
               value: {{ $.Values.axelix.master.auth.cookie.secure | quote }}
 
+            {{- with $.Values.axelix.master.auth.jwt.algorithm }}
             - name: AXELIX_MASTER_AUTH_JWT_ALGORITHM
-              value: {{ $.Values.axelix.master.auth.jwt.algorithm | quote }}
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with $.Values.axelix.master.auth.jwt.signingKey }}
             - name: AXELIX_MASTER_AUTH_JWT_SIGNING_KEY
-              value: {{ $.Values.axelix.master.auth.jwt.signingKey | quote }}
+              value: {{ . | quote }}
+            {{- end }}
             - name: AXELIX_MASTER_AUTH_JWT_LIFESPAN
               value: {{ $.Values.axelix.master.auth.jwt.lifespan | quote }}
 
