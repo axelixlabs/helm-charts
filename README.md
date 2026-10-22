@@ -1,44 +1,38 @@
 # Axelix Kubernetes Helm Chart
 
+> [!IMPORTANT]
+> **This repository is archived and no longer maintained.**
+>
+> The Axelix Helm chart has moved into the [axelixlabs/axelix](https://github.com/axelixlabs/axelix) monorepo
+> (see [`charts/axelix`](https://github.com/axelixlabs/axelix/tree/main/charts/axelix)). Since all Axelix components
+> are released in lockstep, the chart is now versioned and published as part of the single Axelix GitHub release,
+> which also makes the overall management simpler.
+>
+> Please report issues and open pull requests in [axelixlabs/axelix](https://github.com/axelixlabs/axelix).
+
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/license/mit)
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/axelix)](https://artifacthub.io/packages/search?repo=axelix)
 
-The code is provided as-is with no warranties.
+## Migrating to the New Helm Repository
 
-## Installation
+New chart versions are published to the `https://axelixlabs.github.io/axelix` Helm repository.
+The old `https://axelixlabs.github.io/helm-charts` repository will not receive any new chart versions.
 
-[Helm](https://helm.sh) must be installed to use the charts.
-Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
-
-Once Helm is set up properly, add the repo as follows:
+Replace the old repository with the new one:
 
 ```console
-helm repo add axelixlabs https://axelixlabs.github.io/helm-charts
+helm repo remove axelixlabs
+helm repo add axelix https://axelixlabs.github.io/axelix
 helm repo update
 ```
 
-After that, the helm chart can be safely installed (make sure the correct kubeconfig is used by the `helm` cli):
+And install (or upgrade) the chart from it:
 
 ```console
-helm install axelix axelixlabs/axelix
+helm upgrade --install axelix axelix/axelix
 ```
 
-# How We Manage and Release Charts
-
-Because we want our helm charts to be:
-
-- Discoverable via `helm repo add axelixlabs https://axelixlabs.github.io/helm-charts`
-- Discoverable on the Helm Artifacts Hub
-
-We're releasing our charts in the following way:
-
-1. In the GitHub Pages (`gh-pages` branch), we have the `index.yaml` that serves as the main index file for the `helm search` CLI commands (Assuming the repository was added).
-2. GitHub Pages also serve as the actual repository URL for the Artifacts Hub, since it hosts the `index.yaml` along the `artifacthub-repo.yml`.
-3. The actual helm charts are released as compressed tarballs (`.tgz`) inside the GitHub Releases, i.e. each released artifact is bound to a particular GitHub release. The GitHub release page [can be found here](https://github.com/axelixlabs/helm-charts/releases). 
-
-## Contributing
-
-We'd love to have you contribute! Please refer to our [contribution guidelines](https://github.com/axelixlabs/helm-charts/blob/main/CONTRIBUTING.md) for details.
+The full set of configurable properties is documented on the chart's [Artifact Hub page](https://artifacthub.io/packages/helm/axelix/axelix).
 
 ## License
 
